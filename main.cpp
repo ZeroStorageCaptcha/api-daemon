@@ -95,6 +95,9 @@ int main(int argc, char *argv[])
         "\\/_/  /__  \\ \\___  \\  \\ \\ \\____     \\ \\  __ \\  \\ \\  _-/ \\ \\ \\\n"
         "  /\\_____\\  \\/\\_____\\  \\ \\_____\\     \\ \\_\\ \\_\\  \\ \\_\\    \\ \\_\\ \n"
         "  \\/_____/   \\/_____/   \\/_____/      \\/_/\\/_/   \\/_/     \\/_/\n"
+        "https://github.com/ZeroStorageCaptcha/api-daemon\n"
+        "https://notabug.org/ZeroStorageCaptcha/api-daemon\n"
+        "http://git.i2p/ZeroStorageCaptcha/api-daemon\n"
         << COPYRIGHT << "\n\n";
 
     HttpServer server(address, port, threads);
