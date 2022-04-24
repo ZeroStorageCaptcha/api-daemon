@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <iostream>
 
+const std::string COPYRIGHT = "2022 (c) GPLv3, acetone";
 void usage()
 {
     std::cout << "Zero Storage Captcha selfhosted REST API service 0.1 usage:\n\n"
@@ -33,7 +34,7 @@ void usage()
                  "  3.2 Only numbers mode:\n"
                  "     -> /settings?number_mode= [enable|disable]\n" << std::endl;
 
-    std::cout << "2022 (c) GPLv3, acetone" << std::endl;
+    std::cout << COPYRIGHT << std::endl;
 
 }
 
@@ -87,6 +88,14 @@ int main(int argc, char *argv[])
         usage();
         return 1;
     }
+
+    std::cout <<
+        " ______     ______     ______        ______     ______   __\n"
+        "/\\___  \\   /\\  ___\\   /\\  ___\\      /\\  __ \\   /\\  == \\ /\\ \\\n"
+        "\\/_/  /__  \\ \\___  \\  \\ \\ \\____     \\ \\  __ \\  \\ \\  _-/ \\ \\ \\\n"
+        "  /\\_____\\  \\/\\_____\\  \\ \\_____\\     \\ \\_\\ \\_\\  \\ \\_\\    \\ \\_\\ \n"
+        "  \\/_____/   \\/_____/   \\/_____/      \\/_/\\/_/   \\/_/     \\/_/\n"
+        << COPYRIGHT << "\n\n";
 
     HttpServer server(address, port, threads);
 
