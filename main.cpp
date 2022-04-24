@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         else if ((param == "--port" or param == "-p") and i+1 < argc)
         {
             bool ok;
-            port = QString(argv[i+1]).toInt(&ok);
+            port = QString(argv[i+1]).toUShort(&ok);
             if (not ok)
             {
                 throw std::invalid_argument("Port not int");
