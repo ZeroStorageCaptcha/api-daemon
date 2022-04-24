@@ -1,4 +1,4 @@
-# Copy it to /etc/system/systemd/ and make executable (chmod +x)
+# Copy it to /etc/systemd/system/ and start service via "systemctl start zsc-daemon"
 
 [Unit]
 Description=Zero storage captcha service
