@@ -1,0 +1,17 @@
+# Copy it to /etc/system/systemd/ and make executable (chmod +x)
+
+[Unit]
+Description=Zero storage captcha service
+After=network.target
+
+[Service]
+Type=idle
+User=nobody
+# Change path and parameters to actual:
+ExecStart=/path/to/zsc-daemon -a 127.0.0.1 -p 7696 -t 4
+# To run on non-GUI system:
+Environment=QT_QPA_PLATFORM=offscreen
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
