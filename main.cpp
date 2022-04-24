@@ -7,6 +7,7 @@
 #include <iostream>
 
 const std::string COPYRIGHT = "2022 (c) GPLv3, acetone";
+
 void usage()
 {
     std::cout << "Zero Storage Captcha selfhosted REST API service 0.1 usage:\n\n"
@@ -35,7 +36,6 @@ void usage()
                  "     -> /settings?number_mode= [enable|disable]\n" << std::endl;
 
     std::cout << COPYRIGHT << std::endl;
-
 }
 
 int main(int argc, char *argv[])
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     // "Environment=QT_QPA_PLATFORM=offscreen" in systemd service ([Service] section)
     QApplication a(argc, argv);
 
-    int threads = std::thread::hardware_concurrency();
+    int threads = static_cast<int>(std::thread::hardware_concurrency());
     quint16 port = 7697;
     QString address;
 

@@ -235,7 +235,6 @@ void SocketRunnable::reader()
     }
 }
 
-
 void SocketRunnable::writeJsonError(const QString &text)
 {
     JsonAnswer answer;
