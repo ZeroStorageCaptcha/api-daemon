@@ -1,4 +1,4 @@
-// 2022 (c) GPLv3, acetone at i2pmail.org
+// GPLv3 (c) acetone, 2022
 // Zero Storage Captcha
 
 #ifndef SOCKETRUNNABLE_H
@@ -28,9 +28,8 @@ private:
     inline QString readBeforeSpace();
     inline QString getValue(const QString& key) const;
 
-    void wariningLog(const QString& str) const;
     void reader();
-    void writeJsonError(const QString& text);
+    void writeError(const QString &text);
 };
 
 #endif // SOCKETRUNNABLE_H

@@ -1,3 +1,6 @@
+// GPLv3 (c) acetone, 2022
+// Zero Storage Captcha
+
 #include "jsonanswer.h"
 
 #include <QJsonDocument>

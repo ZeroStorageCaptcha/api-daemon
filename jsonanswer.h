@@ -1,3 +1,6 @@
+// GPLv3 (c) acetone, 2022
+// Zero Storage Captcha
+
 #ifndef JSONANSWER_H
 #define JSONANSWER_H
 

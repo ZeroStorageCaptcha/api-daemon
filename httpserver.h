@@ -1,4 +1,4 @@
-// 2022 (c) GPLv3, acetone at i2pmail.org
+// GPLv3 (c) acetone, 2022
 // Zero Storage Captcha
 
 #ifndef HTTPSERVER_H

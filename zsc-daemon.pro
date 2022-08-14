@@ -11,15 +11,10 @@ SOURCES += \
     jsonanswer.cpp \
     main.cpp \
     socketrunnable.cpp \
-    cpp-lib/zerostoragecaptchacrypto.cpp \
     cpp-lib/zerostoragecaptcha.cpp
 
 HEADERS += \
     httpserver.h \
     jsonanswer.h \
     socketrunnable.h \
-    cpp-lib/zerostoragecaptchacrypto.h \
     cpp-lib/zerostoragecaptcha.h
-
-LIBS += \
-    -lcrypto

@@ -1,4 +1,4 @@
-// 2022 (c) GPLv3, acetone at i2pmail.org
+// GPLv3 (c) acetone, 2022
 // Zero Storage Captcha
 
 #include "httpserver.h"
@@ -6,33 +6,29 @@
 #include <QApplication>
 #include <iostream>
 
-const std::string COPYRIGHT = "2022 (c) GPLv3, acetone";
+const std::string COPYRIGHT = "GPLv3 (c) acetone, 2022";
 
 void usage()
 {
-    std::cout << "Zero Storage Captcha selfhosted REST API service 0.1 usage:\n\n"
+    std::cout << "Zero Storage Captcha selfhosted REST API service 0.2 usage:\n\n"
                  "RUN\n"
-                 "# To start QApplication without X-server (non-GUI system) should use:\n"
-                 "# \"export QT_QPA_PLATFORM=offscreen\" in plain shell\n"
-                 "# or\n"
-                 "# \"Environment=QT_QPA_PLATFORM=offscreen\" in systemd service, [Service] section\n"
-                 "  -a --address  Address to bind\n"
+                 "  -a --address  Address to bind (127.0.0.1 by default)\n"
                  "  -p --port     Port to bind (7697 by default)\n"
-                 "  -t --threads  Working threads (" << std::thread::hardware_concurrency() << " by default)\n" << std::endl;
+                 "  -t --threads  Working threads (hardware count by default)\n" << std::endl;
 
-    std::cout << "API (GET request, JSON response)\n"
+    std::cout << "REST API (GET request)\n"
                  "# Each response contains a boolean \"status\" that indicates the logic success of the operation.\n"
                  "# If !status, read \"message\" field.\n"
                  "  1. [Generate captcha]\n"
-                 "     -> /generate?length= [>0] &difficulty= [0-5] &output= [base64|file] IF output=file: &filepath= [file system path]\n"
-                 "     <- \"token\", IF output=base64: \"png\" (base64 encoded picture)\n"
+                 "     -> /generate?length= [>0] &difficulty= [0-2]\n"
+                 "     <- { \"token\": \"CAPTCHA_TOKEN\", \"png\": \"base64 encoded picture\" }\n"
                  "  2. [Validate captcha]\n"
                  "     -> /validate?answer= [user's answer] &token = [user's token]\n"
-                 "     <- boolean \"valid\"\n"
-                 "  3. [Settings]\n"
-                 "  3.1 Tokens case sensitive to captcha answer:\n"
+                 "     <- { \"valid\": true|false }\n"
+                 "  3. [Global settings]\n"
+                 "  3.1 Tokens case sensitive to captcha answer (disabled by default):\n"
                  "     -> /settings?case_sensitive= [enable|disable]\n"
-                 "  3.2 Only numbers mode:\n"
+                 "  3.2 Numbers only mode (disabled by default):\n"
                  "     -> /settings?number_mode= [enable|disable]\n" << std::endl;
 
     std::cout << COPYRIGHT << std::endl;
@@ -48,7 +44,7 @@ int main(int argc, char *argv[])
 
     int threads = static_cast<int>(std::thread::hardware_concurrency());
     quint16 port = 7697;
-    QString address;
+    QString address = "127.0.0.1";
 
     for (int i = 1; i < argc; i++)
     {
@@ -63,7 +59,7 @@ int main(int argc, char *argv[])
             port = QString(argv[i+1]).toUShort(&ok);
             if (not ok)
             {
-                throw std::invalid_argument("Port not int");
+                throw std::invalid_argument("Port not a number");
             }
         }
         else if ((param == "--threads" or param == "-t") and i+1 < argc)
@@ -72,7 +68,7 @@ int main(int argc, char *argv[])
             threads = QString(argv[i+1]).toInt(&ok);
             if (not ok or threads < 1)
             {
-                throw std::invalid_argument("Threads not int or less then 1");
+                throw std::invalid_argument("Threads not a number or less then 1");
             }
         }
         else if (param == "--help" or param == "-h")

@@ -1,4 +1,4 @@
-// 2022 (c) GPLv3, acetone at i2pmail.org
+// GPLv3 (c) acetone, 2022
 // Zero Storage Captcha
 
 #include "socketrunnable.h"
@@ -7,7 +7,6 @@
 
 #include <QRegularExpression>
 #include <QFile>
-#include <QDateTime>
 
 constexpr int URL_PATH_MAX_LENGTH {200};
 
@@ -39,10 +38,10 @@ void SocketRunnable::settings()
         else if (setCaseSensitive == "disable") enable = false;
         else
         {
-            writeJsonError("Invalid case_sensitive argument: expected enable or disable");
+            writeError("Invalid case_sensitive argument: expected enable or disable");
             return;
         }
-        ZeroStorageCaptchaCrypto::KeyHolder::setCaseSensitive(enable);
+        ZeroStorageCaptcha::setCaseSensitive(enable);
     }
 
     QString numberMode = getValue("number_mode");
@@ -53,15 +52,15 @@ void SocketRunnable::settings()
         else if (numberMode == "disable") enable = false;
         else
         {
-            writeJsonError("Invalid number_mode argument: expected enable or disable");
+            writeError("Invalid number_mode argument: expected enable or disable");
             return;
         }
-        ZeroStorageCaptcha::setOnlyNumbersMode(enable);
+        ZeroStorageCaptcha::setNumbersOnlyMode(enable);
     }
 
     if (setCaseSensitive.isEmpty() and numberMode.isEmpty())
     {
-        writeJsonError("Invalid key: expected case_sensitive or number_mode");
+        writeError("Invalid key: expected case_sensitive or number_mode");
     }
     else
     {
@@ -73,69 +72,34 @@ void SocketRunnable::settings()
 
 void SocketRunnable::generate()
 {
-    bool success = false;
+    JsonAnswer answer;
+    QString errorMessage;
 
-    int length = getValue("length").toInt(&success);
-    if (not success)
+    int length = getValue("length").toInt();
+    if (length < 0)
     {
-        writeJsonError("Invalid length: expected int > 0");
-        return;
-    }
-
-    int difficulty = getValue("difficulty").toInt(&success);
-    if (not success)
-    {
-        writeJsonError("Invalid difficulty: expected int (0, 5)");
-        return;
-    }
-    if (not success)
-    {
-        writeJsonError("Invalid difficulty: expected int (0, 5)");
-        return;
+        errorMessage += "Length must be greater than 0;";
     }
 
-    auto res = ZeroStorageCaptcha::getCaptcha(length, difficulty);
-    if (res.token().isEmpty())
+    int difficulty = getValue("difficulty").toInt();
+    if (difficulty < 0 or difficulty > 2)
     {
-        writeJsonError("Temporary issue: token cache is full");
-        return;
+        errorMessage += "Difficulty can take values from 0 to 2;";
     }
 
-    JsonAnswer result;
-    QString output = getValue("output");
-    if (output == "file")
-    {
-        QString filepath = getValue("filepath");
-        filepath = QByteArray::fromPercentEncoding(filepath.toUtf8());
-        filepath.replace('+', ' ');
-        filepath.replace("\\", "/");
-        if (filepath.isEmpty())
-        {
-            writeJsonError("Accepted flag to save picture to disk, but \"filepath\" is empty");
-            return;
-        }
-        QFile f(filepath);
-        if (not f.open(QIODevice::WriteOnly))
-        {
-            writeJsonError("Can not write file " + filepath);
-            return;
-        }
-        f.write(res.picture());
-        f.close();
-    }
-    else if (output == "base64")
-    {
-        result.setValue("png", QString(res.picture().toBase64()));
-    }
-    else
-    {
-        writeJsonError("Invalid output type: expected file or base64");
-        return;
-    }
+    ZeroStorageCaptcha captcha;
+    captcha.setDifficulty(difficulty);
+    captcha.generateAnswer(length);
+    captcha.render();
 
-    result.setValue("status", true);
-    result.setValue("token", res.token());
-    m_socket->write(result.document());
+    answer.setValue("status", errorMessage.isEmpty());
+    if (not errorMessage.isEmpty())
+    {
+        answer.setValue("message", errorMessage);
+    }
+    answer.setValue("png", QString(captcha.picturePng().toBase64()));
+    answer.setValue("token", captcha.token());
+    m_socket->write(answer.document());
 }
 
 void SocketRunnable::validate()
@@ -143,14 +107,14 @@ void SocketRunnable::validate()
     QString token = getValue("token");
     if (token.isEmpty())
     {
-        writeJsonError("Empty token");
+        writeError("Empty token");
         return;
     }
 
     QString answer = getValue("answer");
     if (answer.isEmpty())
     {
-        writeJsonError("Empty answer");
+        writeError("Empty answer");
     }
 
     bool valid = ZeroStorageCaptcha::validate(answer, token);
@@ -170,7 +134,6 @@ QString SocketRunnable::readBeforeSpace()
     {
         if (counter > URL_PATH_MAX_LENGTH)
         {
-            wariningLog ("SocketRunnable::readBeforeSpace() size > " + QString::number(URL_PATH_MAX_LENGTH) + ": " + result);
             break;
         }
         result += symbol;
@@ -186,18 +149,12 @@ QString SocketRunnable::getValue(const QString &key) const
     QString pattern = key+"=";
     if (not result.contains(pattern)) return QString();
 
-    result.remove(QRegularExpression("^.*"+QRegularExpression::escape(pattern)));
+    static QRegularExpression rgx_allToPattern("^.*"+QRegularExpression::escape(pattern));
+    result.remove(rgx_allToPattern);
     if (result.isEmpty() or result.startsWith("&")) return QString();
-    result.remove(QRegularExpression("&.*$"));
+    static QRegularExpression rgx_allFromAmpersand("&.*$");
+    result.remove(rgx_allFromAmpersand);
     return result;
-}
-
-void SocketRunnable::wariningLog(const QString &str) const
-{
-    qInfo().noquote() <<
-        "<warning time=\"" + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")+ "\">\n"
-        "  " + str + "\n"
-        "</warning>";
 }
 
 void SocketRunnable::reader()
@@ -206,14 +163,14 @@ void SocketRunnable::reader()
 
     if (reqType != "GET")
     {
-        writeJsonError("Invalid request: expected GET");
-        m_socket->waitForBytesWritten();
+        writeError("Invalid request: expected GET");
         return;
     }
 
     QString urlPath = readBeforeSpace();
     m_request = urlPath;
-    m_request.remove(QRegularExpression("^.*\\?"));
+    static QRegularExpression rgx_allToQuestionMark("^.*\\?");
+    m_request.remove(rgx_allToQuestionMark);
     m_request.remove('\r');
     m_request.remove('\n');
 
@@ -231,11 +188,11 @@ void SocketRunnable::reader()
     }
     else
     {
-        writeJsonError("Invalid request path: expected /generate, /validate or /settings");
+        writeError("Invalid request path: expected /generate, /validate or /settings");
     }
 }
 
-void SocketRunnable::writeJsonError(const QString &text)
+void SocketRunnable::writeError(const QString &text)
 {
     JsonAnswer answer;
     answer.setError(text);
