@@ -1,5 +1,5 @@
 # ZSC API daemon
-Zero Storage Captcha selfhosted REST API service
+Zero Storage Captcha selfhosted REST API service.
 
 ## Compile
 
@@ -28,7 +28,7 @@ GET request, JSON response
 
 1. Generate captcha
    ```
-   -> /generate?length=CAPTCHA_TEXT_LENGTH&difficulty=0|1|2"
+   -> /generate?length=CAPTCHA_TEXT_LENGTH&difficulty=0|1|2
    <- { "token": "CAPTCHA_TOKEN", "png": "BASE64_ENCODED_PICTURE" }
    ```
 2. Validate captcha
@@ -53,8 +53,8 @@ GET request, JSON response
    Client: /generate?length=4&difficulty=1
    Server: 
    {
-     "png": "iVBORw0KGgoAAAANSU <...> AAAAAElFTkSuQmCC",
      "status": true,
+     "png": "iVBORw0KGgoAAAANSU <...> AAAAAElFTkSuQmCC",
      "token":" i2oefBw6mswaORIphgDcY7GwnS_532"
    }
    ```
