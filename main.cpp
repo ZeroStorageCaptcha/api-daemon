@@ -17,19 +17,19 @@ void usage()
                  "  -t --threads  Working threads (hardware count by default)\n" << std::endl;
 
     std::cout << "REST API (GET request)\n"
-                 "# Each response contains a boolean \"status\" that indicates the logic success of the operation.\n"
-                 "# If !status, read \"message\" field.\n"
+                 "Each response contains a boolean \"status\" that indicates the logic success of the operation.\n"
+                 "If !status, read \"message\" field.\n"
                  "  1. [Generate captcha]\n"
-                 "     -> /generate?length= [>0] &difficulty= [0-2]\n"
-                 "     <- { \"token\": \"CAPTCHA_TOKEN\", \"png\": \"base64 encoded picture\" }\n"
+                 "     -> /generate?length=CAPTCHA_TEXT_LENGTH&difficulty=0|1|2\n"
+                 "     <- { \"token\": \"CAPTCHA_TOKEN\", \"png\": \"BASE64_ENCODED_PICTURE\" }\n"
                  "  2. [Validate captcha]\n"
-                 "     -> /validate?answer= [user's answer] &token = [user's token]\n"
+                 "     -> /validate?answer=CAPTCHA_ANSWER&token=CAPTCHA_TOKEN\n"
                  "     <- { \"valid\": true|false }\n"
                  "  3. [Global settings]\n"
                  "  3.1 Tokens case sensitive to captcha answer (disabled by default):\n"
-                 "     -> /settings?case_sensitive= [enable|disable]\n"
+                 "     -> /settings?case_sensitive=enable|disable\n"
                  "  3.2 Numbers only mode (disabled by default):\n"
-                 "     -> /settings?number_mode= [enable|disable]\n" << std::endl;
+                 "     -> /settings?number_mode=enable|disable\n" << std::endl;
 
     std::cout << COPYRIGHT << std::endl;
 }
