@@ -149,8 +149,7 @@ QString SocketRunnable::getValue(const QString &key) const
     QString pattern = key+"=";
     if (not result.contains(pattern)) return QString();
 
-    static QRegularExpression rgx_allToPattern("^.*"+QRegularExpression::escape(pattern));
-    result.remove(rgx_allToPattern);
+    result.remove(QRegularExpression("^.*"+QRegularExpression::escape(pattern)));
     if (result.isEmpty() or result.startsWith("&")) return QString();
     static QRegularExpression rgx_allFromAmpersand("&.*$");
     result.remove(rgx_allFromAmpersand);
