@@ -1,4 +1,4 @@
-// GPLv3 (c) acetone, 2022
+// GPLv3 (c) acetone, 2022-2023
 // Zero Storage Captcha
 
 #include "httpserver.h"
@@ -6,11 +6,11 @@
 #include <QApplication>
 #include <iostream>
 
-const std::string COPYRIGHT = "GPLv3 (c) acetone, 2022";
+const std::string COPYRIGHT = "GPLv3 (c) acetone, 2022-2023";
 
 void usage()
 {
-    std::cout << "Zero Storage Captcha selfhosted REST API service 0.2 usage:\n\n"
+    std::cout << "Zero Storage Captcha self-hosted REST API service 0.3 usage:\n\n"
                  "RUN\n"
                  "  -a --address  Address to bind (127.0.0.1 by default)\n"
                  "  -p --port     Port to bind (7697 by default)\n"

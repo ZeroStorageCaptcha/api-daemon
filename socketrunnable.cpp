@@ -1,4 +1,4 @@
-// GPLv3 (c) acetone, 2022
+// GPLv3 (c) acetone, 2022-2023
 // Zero Storage Captcha
 
 #include "socketrunnable.h"
@@ -6,7 +6,6 @@
 #include "cpp-lib/zerostoragecaptcha.h"
 
 #include <QRegularExpression>
-#include <QFile>
 
 constexpr int URL_PATH_MAX_LENGTH {200};
 
@@ -76,9 +75,9 @@ void SocketRunnable::generate()
     QString errorMessage;
 
     int length = getValue("length").toInt();
-    if (length < 0)
+    if (length < 1)
     {
-        errorMessage += "Length must be greater than 0;";
+        length = 5;
     }
 
     int difficulty = getValue("difficulty").toInt();
@@ -97,6 +96,7 @@ void SocketRunnable::generate()
     {
         answer.setValue("message", errorMessage);
     }
+
     answer.setValue("png", QString(captcha.picturePng().toBase64()));
     answer.setValue("token", captcha.token());
     m_socket->write(answer.document());
