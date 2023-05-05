@@ -10,7 +10,7 @@ const std::string COPYRIGHT = "GPLv3 (c) acetone, 2022-2023";
 
 void usage()
 {
-    std::cout << "Zero Storage Captcha self-hosted REST API service 0.3 usage:\n\n"
+    std::cout << "Zero Storage Captcha self-hosted REST API service 0.4 usage:\n\n"
                  "RUN\n"
                  "  -a --address  Address to bind (127.0.0.1 by default)\n"
                  "  -p --port     Port to bind (7697 by default)\n"
@@ -20,7 +20,7 @@ void usage()
                  "Each response contains a boolean \"status\" that indicates the logic success of the operation.\n"
                  "If !status, read \"message\" field.\n"
                  "  1. [Generate captcha]\n"
-                 "     -> /generate?length=CAPTCHA_TEXT_LENGTH&difficulty=0|1|2\n"
+                 "     -> /generate\n"
                  "     <- { \"token\": \"CAPTCHA_TOKEN\", \"png\": \"BASE64_ENCODED_PICTURE\" }\n"
                  "  2. [Validate captcha]\n"
                  "     -> /validate?answer=CAPTCHA_ANSWER&token=CAPTCHA_TOKEN\n"
@@ -29,7 +29,13 @@ void usage()
                  "  3.1 Tokens case sensitive to captcha answer (disabled by default):\n"
                  "     -> /settings?case_sensitive=enable|disable\n"
                  "  3.2 Numbers only mode (disabled by default):\n"
-                 "     -> /settings?number_mode=enable|disable\n" << std::endl;
+                 "     -> /settings?number_mode=enable|disable\n"
+                 "  3.3 Difficulty (1 by default):\n"
+                 "     -> /settings?difficulty=0|1|2\n"
+                 "  3.4 Text length (number greater than 0, 5 by default):\n"
+                 "     -> /settings?length=6\n"
+                 "  3.5 Cache capacity (2048 by default, 0 for disable):\n"
+                 "     -> /settings?cache_capacity=4096\n" << std::endl;
 
     std::cout << COPYRIGHT << std::endl;
 }

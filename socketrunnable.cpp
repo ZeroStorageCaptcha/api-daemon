@@ -57,9 +57,48 @@ void SocketRunnable::settings()
         ZeroStorageCaptcha::setNumbersOnlyMode(enable);
     }
 
-    if (setCaseSensitive.isEmpty() and numberMode.isEmpty())
+    QString difficulty = getValue("difficulty");
+    if (not difficulty.isEmpty())
     {
-        writeError("Invalid key: expected case_sensitive or number_mode");
+        bool converted = false;
+        int value = difficulty.toInt(&converted);
+        if (not converted or value < 0 or value > 2)
+        {
+            writeError("Invalid difficulty argument: expected number 0-2");
+            return;
+        }
+        ZeroStorageCaptcha::setDefaultDifficulty(value);
+    }
+
+    QString length = getValue("length");
+    if (not length.isEmpty())
+    {
+        bool converted = false;
+        int value = length.toInt(&converted);
+        if (not converted or value < 0)
+        {
+            writeError("Invalid length argument: expected number greater than 0");
+            return;
+        }
+        ZeroStorageCaptcha::setDefaultAnswerLength(value);
+    }
+
+    QString cacheCapacity = getValue("cache_capacity");
+    if (not cacheCapacity.isEmpty())
+    {
+        bool converted = false;
+        int value = cacheCapacity.toInt(&converted);
+        if (not converted or value < 0)
+        {
+            writeError("Invalid cache_capacity argument: expected number");
+            return;
+        }
+        ZeroStorageCaptcha::setCacheMaxCapacity(value);
+    }
+
+    if (setCaseSensitive.isEmpty() and numberMode.isEmpty() and difficulty.isEmpty() and length.isEmpty() and cacheCapacity.isEmpty())
+    {
+        writeError("Invalid key: expected 'case_sensitive', 'number_mode', 'difficulty', 'length' or 'cache_capacity'");
     }
     else
     {
@@ -71,34 +110,13 @@ void SocketRunnable::settings()
 
 void SocketRunnable::generate()
 {
+    auto captcha = ZeroStorageCaptcha::cached();
+
     JsonAnswer answer;
-    QString errorMessage;
+    answer.setValue("status", true);
 
-    int length = getValue("length").toInt();
-    if (length < 1)
-    {
-        length = 5;
-    }
-
-    int difficulty = getValue("difficulty").toInt();
-    if (difficulty < 0 or difficulty > 2)
-    {
-        errorMessage += "Difficulty can take values from 0 to 2;";
-    }
-
-    ZeroStorageCaptcha captcha;
-    captcha.setDifficulty(difficulty);
-    captcha.generateAnswer(length);
-    captcha.render();
-
-    answer.setValue("status", errorMessage.isEmpty());
-    if (not errorMessage.isEmpty())
-    {
-        answer.setValue("message", errorMessage);
-    }
-
-    answer.setValue("png", QString(captcha.picturePng().toBase64()));
-    answer.setValue("token", captcha.token());
+    answer.setValue("png", QString(captcha->picturePng().toBase64()));
+    answer.setValue("token", captcha->token());
     m_socket->write(answer.document());
 }
 

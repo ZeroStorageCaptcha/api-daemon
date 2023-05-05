@@ -3,14 +3,18 @@ Zero Storage Captcha selfhosted REST API service.
 
 ## Compile
 
+Qt5 variant, Debian 11
+
 ```
-sudo apt install git qtdeclarative5-dev
+sudo apt install git build-essential qtdeclarative5-dev
 git clone --recursive https://github.com/ZeroStorageCaptcha/api-daemon.git zero-captcha-daemon
 cd zero-captcha-daemon
 qmake && make
 ```
 
 ## Run
+
+Argument list
 
 ```
 -a --address  Address to bind (127.0.0.1 by default)
@@ -28,7 +32,7 @@ GET request, JSON response
 
 1. Generate captcha
    ```
-   -> /generate?length=CAPTCHA_TEXT_LENGTH&difficulty=0|1|2
+   -> /generate
    <- { "token": "CAPTCHA_TOKEN", "png": "BASE64_ENCODED_PICTURE" }
    ```
 2. Validate captcha
@@ -38,29 +42,42 @@ GET request, JSON response
    ```
 3. Settings
 
-    3.1 Tokens case sensitive to captcha answer:
+    3.1 Tokens case sensitive to captcha answer (`disable` by default):
     ```
      -> /settings?case_sensitive=enable|disable
     ```
-    3.2 Numbers only mode:
+    3.2 Numbers only mode (`disable` by default):
     ```
     -> /settings?number_mode=enable|disable
     ```
+    3.3 Difficulty (`1` by default):
+    ```
+    -> /settings?difficulty=0|1|2
+    ```
+    3.4 Text length (number greater than 0, `5` by default):
+    ```
+    -> /settings?length=6
+    ```
+    3.5 Cache capacity (`2048` by default, `0` for disable):
+    ```
+    -> /settings?cache_capacity=4096
+    ```
+
 ## Example
 
 1. Generate
    ```
-   Client: /generate?length=4&difficulty=1
+   Client: /generate
    Server: 
    {
      "status": true,
      "png": "iVBORw0KGgoAAAANSU <...> AAAAAElFTkSuQmCC",
-     "token":" i2oefBw6mswaORIphgDcY7GwnS_532"
+     "token":" i2oefBw6mswaORIphgDcY7GwnS_Aq"
    }
    ```
 2. Validate
    ```
-   Client: /validate?answer=iuda1&token=i2oefBw6mswaORIphgDcY7GwnS_532
+   Client: /validate?answer=iuda1&token=i2oefBw6mswaORIphgDcY7GwnS_Aq
    Server: 
    {
      "status": true,
