@@ -3,7 +3,18 @@ Zero Storage Captcha selfhosted REST API service.
 
 ## Compile
 
-Qt5 variant, Debian 11
+Qt6 variant, **Debian 12**
+
+```
+sudo apt install git build-essential qt6-base-dev qmake6
+git clone --recursive https://github.com/ZeroStorageCaptcha/api-daemon.git zero-captcha-daemon
+cd zero-captcha-daemon
+qmake && make
+```
+
+---
+
+Qt5 variant, **Debian 11**
 
 ```
 sudo apt install git build-essential qtdeclarative5-dev
