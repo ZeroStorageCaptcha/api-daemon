@@ -20,7 +20,7 @@ Qt5 variant, **Debian 11**
 sudo apt install git build-essential qtdeclarative5-dev
 git clone --recursive https://github.com/ZeroStorageCaptcha/api-daemon.git zero-captcha-daemon
 cd zero-captcha-daemon
-qmake && make
+qmake6 && make
 ```
 
 ## Run
