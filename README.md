@@ -33,6 +33,8 @@ Argument list
 -t --threads  Working threads (hardware value by default)
 ```
 
+**Important note**: For running on non-gui system use "QT_QPA_PLATFORM=offscreen" in your environment.
+
 For Linux systems with systemd check `systemd` folder which contains service file example.
 
 ## API
